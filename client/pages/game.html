@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Game - Cờ Tướng Online</title>
+        <link rel="stylesheet" href="../assets/css/board.css" />
+        <link rel="stylesheet" href="../assets/css/game.css" />
+    </head>
+
+    <body>
+        <div class="game-page">
+            <header class="game-header">
+                <h1 class="game-title">Đang Chơi</h1>
+                <div class="game-actions">
+                    <button class="btn btn-warning" id="btn-draw-offer">Xin Hòa</button>
+                    <button class="btn btn-danger" id="btn-resign">Đầu Hàng</button>
+                    <button class="btn btn-secondary" id="btn-leave">Rời</button>
+                </div>
+            </header>
+
+            <div class="game-container">
+                <div class="game-left">
+                    <div class="player-panel" id="opponent-panel">
+                        <div class="player-avatar" id="opponent-avatar">⚫</div>
+                        <div class="player-details">
+                            <div class="player-name" id="opponent-name">Đối thủ</div>
+                            <div class="player-rating" id="opponent-rating">1500</div>
+                        </div>
+                        <div class="timer-display" id="opponent-timer">10:00</div>
+                    </div>
+
+                    <div class="board-container">
+                        <div id="xiangqi-board"></div>
+                    </div>
+                    <div class="player-panel active" id="player-panel">
+                        <div class="player-avatar" id="player-avatar">🔴</div>
+                        <div class="player-details">
+                            <div class="player-name" id="player-name">Bạn</div>
+                            <div class="player-rating" id="player-rating">1500</div>
+                        </div>
+                        <div class="timer-display" id="player-timer">10:00</div>
+                    </div>
+                </div>
+
+                <div class="game-right">
+                    <div class="turn-indicator">
+                        <div class="turn-text" id="turn-text">Lượt đối thủ</div>
+                    </div>
+                    <div class="game-panel">
+                        <h3 class="panel-header">Lịch Sử Nước Đi</h3>
+                        <div class="moves-list" id="moves-list">
+                            <div style="color: #aaa; text-align: center; padding: 20px">Chưa có nước đi nào</div>
+                        </div>
+                    </div>
+                    <div class="game-chat">
+                        <div class="chat-header">Trò chuyện</div>
+
+                        <div class="chat-messages" id="chat-messages"></div>
+
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off" />
+
+                            <button id="btn-send-chat">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="result-modal">
+            <div class="modal-content">
+                <h2 id="result-title">Kết Quả</h2>
+                <div class="result-stats">
+                    <div class="stat-row">
+                        <span>Thời gian trận:</span>
+                        <strong id="result-time">00:00</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Điểm cộng:</span>
+                        <strong id="result-rating-change">+0</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Điểm hiện tại:</span>
+                        <strong id="result-new-rating">1500</strong>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-warning" id="btn-rematch">Đấu Lại</button>
+                    <button class="btn btn-primary" id="btn-new-game">Trận Mới</button>
+                    <button class="btn btn-secondary" id="btn-to-lobby">Lobby</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="draw-modal">
+            <div class="modal-content">
+                <h2>Đề Nghị Hòa</h2>
+                <p>Đối thủ đề nghị hòa. Bạn đồng ý không?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="btn-accept-draw">Đồng Ý</button>
+                    <button class="btn btn-danger" id="btn-decline-draw">Từ Chối</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="rematch-modal">
+            <div class="modal-content">
+                <h2>Yêu Cầu Đấu Lại</h2>
+                <p id="rematch-request-text">Đối thủ muốn đấu lại. Bạn đồng ý không?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="btn-accept-rematch">Đồng Ý</button>
+                    <button class="btn btn-danger" id="btn-decline-rematch">Từ Chối</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="rematch-waiting-modal">
+            <div class="modal-content">
+                <h2>Đang Chờ</h2>
+                <p>Đang chờ đối thủ phản hồi yêu cầu đấu lại...</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btn-cancel-rematch">Hủy</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="../src/pages/game.js"></script>
+    </body>
+</html>

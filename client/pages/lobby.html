@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby - Cờ Tướng Online</title>
+    <!-- Lobby page has inline styles only -->
+    <link rel="stylesheet" href="../assets/css/lobby.css">
+</head>
+
+<body>
+    <div class="lobby-page">
+        <header class="lobby-header">
+            <h1>Cờ Tướng Online</h1>
+            <div class="user-info">
+                <div class="user-profile">
+                    <div class="user-avatar" id="user-avatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">Username</div>
+                        <div class="user-rating" id="user-rating">Rating: 1500</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-logout" id="btn-logout">Đăng xuất</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="lobby-content">
+            <aside class="lobby-sidebar">
+                <div class="menu-section">
+                    <h3>Chơi Game</h3>
+                    <button class="menu-btn" data-action="create-room">Tạo Phòng</button>
+                    <button class="menu-btn" data-action="room-list">Danh Sách Phòng</button>
+                </div>
+
+                <div class="menu-section">
+                    <h3>Thống Kê</h3>
+                    <button class="menu-btn" data-action="history">Lịch Sử Trận Đấu</button>
+                    <button class="menu-btn" data-action="spectate">Xem Trận Đấu</button>
+                    <button class="menu-btn" data-action="profile">Hồ Sơ</button>
+                </div>
+            </aside>
+
+            <main class="lobby-main">
+                <div class="section-header">
+                    <h2>Tìm Đối Thủ</h2>
+                    <button class="btn-primary" id="btn-find-match">Tìm Trận</button>
+                </div>
+
+                <div id="searching-indicator" class="searching-indicator">
+                    <div class="spinner"></div>
+                    <h3>Đang tìm đối thủ...</h3>
+                    <p>Vui lòng chờ trong giây lát</p>
+                    <button class="btn-danger" id="btn-cancel-search">Hủy</button>
+                </div>
+
+                <div id="match-found" class="match-found">
+                    <h2>Tìm thấy đối thủ!</h2>
+                    <p id="opponent-info">Đối thủ: <strong>Player123</strong> (Rating: 1520)</p>
+                    <button class="btn-primary" id="btn-start-game">Bắt Đầu</button>
+                </div>
+
+                <div id="status-message" class="status-message" style="display: none;"></div>
+
+                <div class="leaderboard-preview">
+                    <div class="section-header">
+                        <h2>Top Players</h2>
+                    </div>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Hạng</th>
+                                <th>Tên</th>
+                                <th>Rating</th>
+                                <th>Trận</th>
+                                <th>Tỷ Lệ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <tr>
+                                <td><span class="rank-badge gold">1</span></td>
+                                <td>Loading...</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div class="modal-overlay" id="create-room-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Tạo Phòng Chơi</h2>
+                <button class="modal-close" onclick="closeModal('create-room-modal')">&times;</button>
+            </div>
+            <form id="create-room-form">
+                <div class="form-group">
+                    <label>Mật khẩu phòng (tùy chọn)</label>
+                    <input type="password" id="room-password" placeholder="Để trống nếu không cần mật khẩu">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('create-room-modal')">Hủy</button>
+                    <button type="submit" class="btn-primary">Tạo Phòng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Room List Modal -->
+    <div class="modal-overlay" id="room-list-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Danh Sách Phòng</h2>
+                <button class="modal-close" onclick="closeModal('room-list-modal')">&times;</button>
+            </div>
+            <div class="room-search">
+                <input type="text" id="room-search-input" placeholder="Nhập mã phòng để tìm kiếm..." 
+                       oninput="filterRoomList()" autocomplete="off">
+            </div>
+            <div class="room-list" id="room-list-container">
+                <div class="no-rooms">
+                    <p>Đang tải...</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="refreshRoomList()">Làm mới</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('room-list-modal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Room Password Modal -->
+    <div class="modal-overlay" id="join-password-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🔐 Nhập Mật Khẩu</h2>
+                <button class="modal-close" onclick="closeModal('join-password-modal')">&times;</button>
+            </div>
+            <form id="join-password-form">
+                <div class="form-group">
+                    <label>Mật khẩu phòng</label>
+                    <input type="password" id="join-room-password" placeholder="Nhập mật khẩu phòng" required>
+                </div>
+                <input type="hidden" id="join-room-code">
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('join-password-modal')">Hủy</button>
+                    <button type="submit" class="btn-primary">Vào Phòng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Matches Modal (Spectate) -->
+    <div class="modal-overlay" id="live-matches-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Trận Đấu Đang Diễn Ra</h2>
+                <button class="modal-close" onclick="closeModal('live-matches-modal')">&times;</button>
+            </div>
+            <div class="live-matches-list" id="live-matches-container">
+                <div class="no-matches">
+                    <p>Đang tải...</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="refreshLiveMatches()">Làm mới</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('live-matches-modal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Hồ Sơ Cá Nhân</h2>
+                <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
+            </div>
+            <div class="profile-content" id="profile-content">
+                <div class="profile-loading">
+                    <p>Đang tải...</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="copyUserId()">Copy ID</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('profile-modal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting Room Modal -->
+    <div class="modal-overlay" id="waiting-room-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Phòng Chơi</h2>
+                <button class="modal-close" onclick="leaveRoom()">&times;</button>
+            </div>
+            <div class="waiting-room">
+                <div class="room-code-display">
+                    <div class="code" id="waiting-room-code">XXXXXXXX</div>
+                    <div class="hint">Chia sẻ mã này để bạn bè tham gia</div>
+                </div>
+                <div class="waiting-players">
+                    <div class="player-slot filled" id="host-slot">
+                        <div class="player-name" id="host-name">Host</div>
+                        <div class="player-rating" id="host-rating">1500</div>
+                    </div>
+                    <div class="player-slot empty" id="guest-slot">
+                        <div class="player-name" id="guest-name"><span class="waiting-spinner"></span>Đang chờ...</div>
+                        <div class="player-rating" id="guest-rating"></div>
+                    </div>
+                </div>
+                <div id="waiting-room-status">
+                    <p>Đang chờ đối thủ tham gia...</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-danger" onclick="leaveRoom()">Rời Phòng</button>
+                    <button type="button" class="btn-primary" id="btn-start-room-game" disabled>Bắt Đầu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../src/pages/lobby.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+/instruction
+/.vscode
+/server/bin
+/client/lib/libclient.so
+/docs

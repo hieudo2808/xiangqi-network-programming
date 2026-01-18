@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Lại Trận Đấu - Cờ Tướng Online</title>
+    <link rel="stylesheet" href="../assets/css/board.css">
+    <link rel="stylesheet" href="../assets/css/replay.css">
+</head>
+
+<body>
+    <div class="replay-page">
+        <header class="replay-header">
+            <h1>Xem Lại Trận Đấu</h1>
+            <button class="btn btn-secondary" id="btn-back">← Về Lobby</button>
+        </header>
+
+        <div class="replay-content">
+            <!-- Match History List -->
+            <div class="history-panel">
+                <h2>Lịch Sử Trận Đấu</h2>
+                <div class="match-list" id="match-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Đang tải...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Replay Board -->
+            <div class="replay-board-panel" id="replay-board-panel">
+                <div class="no-match-selected">
+                    <div class="icon"></div>
+                    <h2>Chọn trận đấu để xem lại</h2>
+                    <p>Danh sách trận đấu ở bên trái</p>
+                </div>
+            </div>
+
+            <!-- Moves List -->
+            <div class="moves-panel" id="moves-panel" style="display: none;">
+                <h3>Các Nước Đi</h3>
+                <div class="moves-list" id="moves-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../src/pages/replay.js"></script>
+</body>
+
+</html>
