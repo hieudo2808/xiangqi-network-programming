@@ -63,5 +63,6 @@ bool lobby_decline_challenge(const char* challenge_id, int user_id);
 void lobby_cleanup_expired_challenges(void);
 
 int lobby_get_ready_users(int* user_ids, int max_count);
+void lobby_cleanup_rooms_for_user(int user_id);
 
 #endif

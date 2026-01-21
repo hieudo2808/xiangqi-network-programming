@@ -320,3 +320,18 @@ int lobby_get_ready_users(int* user_ids, int max_count) {
     }
     return count;
 }
+
+void lobby_cleanup_rooms_for_user(int user_id) {
+    for (int i = 0; i < MAX_ROOMS; i++) {
+        if (!rooms[i].occupied)
+            continue;
+
+        if (rooms[i].host_user_id == user_id) {
+            printf("[Lobby] Cleaning up room %s (host %d disconnected)\n", rooms[i].room_code, user_id);
+            memset(&rooms[i], 0, sizeof(room_t));
+        } else if (rooms[i].guest_user_id == user_id) {
+            printf("[Lobby] Removing guest %d from room %s\n", user_id, rooms[i].room_code);
+            rooms[i].guest_user_id = 0;
+        }
+    }
+}

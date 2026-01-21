@@ -4,8 +4,6 @@ import * as roomManager from './lobby/roomManager.js';
 import * as matchmaking from './lobby/matchmakingManager.js';
 import * as profile from './lobby/profileManager.js';
 
-let isConnected = false;
-
 window.openModal = function (modalId) {
     document.getElementById(modalId)?.classList.add('active');
 };
@@ -146,7 +144,7 @@ if (btnFindMatch) {
 
     const userDataStr = localStorage.getItem('xiangqi_user');
     if (!userDataStr) {
-        window.location.href = 'login.html';
+        window.location.href = '../index.html';
         return;
     }
 
@@ -161,7 +159,7 @@ if (btnFindMatch) {
         if (!serverInfoStr) {
             showMessage('error', 'Chưa kết nối server. Vui lòng đăng nhập lại.');
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = '../index.html';
             }, 2000);
             return;
         }
@@ -184,7 +182,6 @@ if (btnFindMatch) {
             }
 
             window.gameController = gameController;
-            isConnected = true;
 
             if (btnFindMatch) {
                 btnFindMatch.disabled = false;
@@ -198,7 +195,6 @@ if (btnFindMatch) {
             return;
         }
     } else {
-        isConnected = true;
         if (btnFindMatch) {
             btnFindMatch.disabled = false;
             btnFindMatch.textContent = '⚡ Tìm Trận';
@@ -231,7 +227,7 @@ if (btnFindMatch) {
         if (confirm('Bạn có chắc muốn đăng xuất?')) {
             localStorage.removeItem('xiangqi_user');
             localStorage.removeItem('current_match');
-            window.location.href = 'login.html';
+            window.location.href = '../index.html';
         }
     });
 

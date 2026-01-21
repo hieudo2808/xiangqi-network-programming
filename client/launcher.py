@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Launcher for Xiangqi Online Game
-Uses pywebview to run the frontend and C client library for network communication
-"""
-
 import os
 import sys
 import json
@@ -22,10 +16,6 @@ except ImportError:
 
 
 class ClientManager:
-    """
-    Singleton manager for C client library.
-    Encapsulates all client state and provides thread-safe operations.
-    """
     _instance = None
     _lock = threading.Lock()
     
@@ -50,25 +40,21 @@ class ClientManager:
         self._poll_thread = None
         self._stop_event = threading.Event()
         
-        # Configuration from environment or defaults
         self.default_host = os.environ.get('XIANGQI_HOST', '127.0.0.1')
         self.default_port = int(os.environ.get('XIANGQI_PORT', '8080'))
         self._lib_path = Path(__file__).parent / "lib" / "libclient.so"
         
-        # Auto-reconnect settings
-        self.reconnect_timeout = 300  # 5 minutes
-        self.reconnect_interval = 5   # Try every 5 seconds
+        self.reconnect_timeout = 300
+        self.reconnect_interval = 5
         self._reconnect_thread = None
         self._reconnect_active = False
         self._reconnect_start_time = None
         self._last_host = None
         self._last_port = None
         
-        # Register cleanup on exit
         atexit.register(self.cleanup)
     
     def load_library(self) -> bool:
-        """Load the C client shared library"""
         if self.client_lib is not None:
             return True
         
@@ -88,7 +74,6 @@ class ClientManager:
             return False
     
     def _setup_function_signatures(self):
-        """Define C function signatures for ctypes"""
         lib = self.client_lib
         
         lib.client_connect.argtypes = [ctypes.c_char_p, ctypes.c_int]
@@ -106,13 +91,11 @@ class ClientManager:
         lib.client_process_messages.argtypes = []
         lib.client_process_messages.restype = ctypes.c_int
         
-        # Message callback type
         self._callback_type = ctypes.CFUNCTYPE(None, ctypes.c_char_p)
         lib.client_set_message_callback.argtypes = [self._callback_type]
         lib.client_set_message_callback.restype = None
     
     def _message_handler(self, json_str):
-        """Callback function for received messages from C client"""
         try:
             message = json_str.decode('utf-8')
             with self.message_queue_lock:
@@ -121,16 +104,13 @@ class ClientManager:
             print(f"Error in message handler: {e}")
     
     def _poll_loop(self):
-        """Background thread to poll for messages from C client"""
         if not self.client_lib:
             return
         
-        # Set up callback
         callback_func = self._callback_type(self._message_handler)
         self.client_lib.client_set_message_callback(callback_func)
-        self._callback_ref = callback_func  # Prevent garbage collection
+        self._callback_ref = callback_func
         
-        # Poll for messages until stop event is set
         was_connected = False
         while not self._stop_event.is_set():
             if self.client_lib:
@@ -140,13 +120,12 @@ class ClientManager:
                     was_connected = True
                     self.client_lib.client_process_messages()
                 elif was_connected and not self._reconnect_active:
-                    # Connection lost - start auto-reconnect
                     print("[ClientManager] Connection lost! Starting auto-reconnect...")
                     self.connected = False
                     was_connected = False
                     self._start_reconnect()
                     
-            self._stop_event.wait(0.01)  # 10ms polling interval, interruptible
+            self._stop_event.wait(0.01)
     
     def _start_reconnect(self):
         """Start the auto-reconnect process"""
@@ -156,7 +135,6 @@ class ClientManager:
         self._reconnect_active = True
         self._reconnect_start_time = time.time()
         
-        # Notify JS about reconnecting
         with self.message_queue_lock:
             self.message_queue.append(json.dumps({
                 "type": "connection_status",
@@ -177,7 +155,6 @@ class ClientManager:
         while self._reconnect_active and not self._stop_event.is_set():
             elapsed = time.time() - self._reconnect_start_time
             
-            # Check timeout
             if elapsed >= self.reconnect_timeout:
                 print(f"[Reconnect] Timeout after {self.reconnect_timeout}s")
                 self._reconnect_active = False
@@ -192,7 +169,6 @@ class ClientManager:
             remaining = int(self.reconnect_timeout - elapsed)
             print(f"[Reconnect] Attempt {attempt}, {remaining}s remaining...")
             
-            # Notify JS about attempt
             with self.message_queue_lock:
                 self.message_queue.append(json.dumps({
                     "type": "connection_status", 
@@ -217,7 +193,6 @@ class ClientManager:
             except Exception as e:
                 print(f"[Reconnect] Attempt {attempt} failed: {e}")
             
-            # Wait before next attempt
             self._stop_event.wait(self.reconnect_interval)
     
     def connect(self, host: str = None, port: int = None) -> dict:
@@ -234,7 +209,7 @@ class ClientManager:
             
             if result == 0 and self.client_lib.client_is_connected():
                 self.connected = True
-                self._last_host = host  # Save for reconnect
+                self._last_host = host
                 self._last_port = port
                 self._start_poll_thread()
                 return {"success": True, "message": "Connected"}
@@ -263,7 +238,7 @@ class ClientManager:
             return {"success": False, "message": "Not connected"}
         
         try:
-            self._stop_event.set()  # Signal poll thread to stop
+            self._stop_event.set()
             if self._poll_thread and self._poll_thread.is_alive():
                 self._poll_thread.join(timeout=1.0)
             
@@ -345,7 +320,7 @@ def create_window():
     html_path = base_path / "index.html"
     
     if not html_path.exists():
-        print(f"ERROR: index.html not found at {html_path}")
+        print(f"ERROR: login.html not found at {html_path}")
         sys.exit(1)
     
     api = ClientAPI()
@@ -353,8 +328,8 @@ def create_window():
     window = webview.create_window(
         title="Cờ Tướng Online - C Client",
         url=str(html_path),
-        width=1400,
-        height=900,
+        width=1920,
+        height=1080,
         min_size=(800, 600),
         js_api=api
     )
@@ -363,38 +338,19 @@ def create_window():
 
 
 def main():
-    """Main entry point"""
-    print("=" * 60)
     print("Xiangqi Online - C Client Launcher")
-    print("=" * 60)
     
-    # Get client manager instance
     manager = ClientManager()
     
-    # Load C client library
-    print("\n[1/3] Loading C client library...")
     if not manager.load_library():
         print("\nERROR: Failed to load C client library!")
         print(f"Make sure you've compiled it: cd lib && make library")
         sys.exit(1)
-    
-    # Show server configuration
-    print(f"\n[2/3] Server configuration:")
-    print(f"  Host: {manager.default_host} (env: XIANGQI_HOST)")
-    print(f"  Port: {manager.default_port} (env: XIANGQI_PORT)")
-    print(f"  (Make sure the C server is running!)")
-    
-    # Create and start webview
-    print(f"\n[3/3] Starting webview...")
+
     window = create_window()
     
-    print("\n" + "=" * 60)
-    print("Application started!")
-    print("=" * 60)
-    print("\nPress Ctrl+C to exit\n")
-    
     try:
-        webview.start(debug=True)
+        webview.start(debug=False)
     except KeyboardInterrupt:
         print("\n\nShutting down...")
     finally:

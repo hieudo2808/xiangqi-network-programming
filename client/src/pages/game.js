@@ -18,7 +18,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const isSpectateMode = urlParams.get('mode') === 'spectate';
 
 if (!userDataStr) {
-    window.location.href = 'login.html';
+    window.location.href = '../index.html';
 }
 
 const userData = JSON.parse(userDataStr);
@@ -143,10 +143,6 @@ function exitToLobby() {
     window.location.href = 'lobby.html';
 }
 
-// =============================================================================
-// Main Initialization
-// =============================================================================
-
 (async () => {
     try {
         await waitForPywebview();
@@ -217,10 +213,6 @@ function exitToLobby() {
     }
 })();
 
-// =============================================================================
-// UI Setup - Player Info
-// =============================================================================
-
 document.getElementById('player-name').textContent = userData.username;
 document.getElementById('player-rating').textContent = `${userData.rating || 1500}`;
 
@@ -234,10 +226,6 @@ if (matchData) {
     document.getElementById('opponent-name').textContent = opponentName;
     document.getElementById('opponent-rating').textContent = `${matchData.opponent_rating || 1500}`;
 }
-
-// =============================================================================
-// Button & Rematch Handlers (using module)
-// =============================================================================
 
 setupButtonHandlers(gameController, {
     isGameActive: () => isGameActive,
@@ -256,14 +244,6 @@ setupRematchHandlers(gameController, {
 });
 
 setupMoveHistoryHandler(gameController);
-
-// =============================================================================
-// Start Game
-// =============================================================================
-
-// Setup periodic timer sync
 timer.setupPeriodicSync(gameController, gameController.matchId, isSpectateMode);
-
-// Start timer and update turn indicator
 timer.startTimer();
 updateTurnIndicator();

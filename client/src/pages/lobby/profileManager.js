@@ -193,7 +193,7 @@ export function displayLiveMatches(matches) {
                     <div class="live-match-time">${elapsed} phút</div>
                 </div>
                 <button class="btn-spectate" onclick="window.spectateMatch('${match.match_id}')">
-                    👁️ Xem
+                    Xem
                 </button>
             </div>
         `;

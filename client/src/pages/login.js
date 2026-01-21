@@ -110,7 +110,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
         } catch (e) {}
 
         setTimeout(() => {
-            window.location.href = 'lobby.html';
+            window.location.href = 'pages/lobby.html';
         }, 1000);
     } catch (error) {
         statusDiv.textContent = `${error.message || 'Đăng nhập thất bại'}`;

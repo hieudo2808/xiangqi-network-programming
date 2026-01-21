@@ -56,9 +56,6 @@ export function filterRoomList() {
     displayRoomList(filteredRooms);
 }
 
-/**
- * Display room list in container
- */
 export function displayRoomList(rooms) {
     const container = document.getElementById('room-list-container');
 
@@ -74,17 +71,26 @@ export function displayRoomList(rooms) {
     let html = '';
     for (const room of rooms) {
         const hasPassword = room.has_password;
-        const statusClass = room.is_full ? 'full' : 'open';
-        const statusText = room.is_full ? 'Đầy' : 'Mở';
-        const lockIcon = hasPassword ? '🔒' : '';
+        const isFull = room.is_full;
+        const statusBadge = isFull
+            ? '<span class="room-badge full">Đầy</span>'
+            : hasPassword
+              ? '<span class="room-badge locked">🔒 Có mật khẩu</span>'
+              : '<span class="room-badge casual">Mở</span>';
 
         html += `
-            <div class="room-item ${room.is_full ? 'disabled' : ''}" 
-                 onclick="${room.is_full ? '' : `window.joinRoom('${room.room_code}', ${hasPassword})`}">
-                <div class="room-code">${lockIcon} ${room.room_code}</div>
-                <div class="room-host">Host: ${room.host_name}</div>
-                <div class="room-rating">Rating: ${room.host_rating || 1500}</div>
-                <div class="room-status ${statusClass}">${statusText}</div>
+            <div class="room-item">
+                <div class="room-info">
+                    <div class="room-host">${room.room_code} - Host: ${room.host_name}</div>
+                    <div class="room-details">
+                        <span>Rating: ${room.host_rating || 1500}</span>
+                        ${statusBadge}
+                    </div>
+                </div>
+                <button class="btn-join" ${isFull ? 'disabled' : ''} 
+                        onclick="window.joinRoom('${room.room_code}', ${hasPassword})">
+                    ${isFull ? 'Đầy' : 'Vào Phòng'}
+                </button>
             </div>
         `;
     }

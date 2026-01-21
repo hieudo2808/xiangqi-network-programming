@@ -81,7 +81,7 @@ export function handleConnectionStatus(bridge, payload) {
                 alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
                 localStorage.removeItem('user_data');
                 localStorage.removeItem('match_data');
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
             }
         });
     } else if (status === 'reconnect_failed') {
@@ -89,7 +89,7 @@ export function handleConnectionStatus(bridge, payload) {
         hideReconnectOverlay();
         bridge.emit('reconnect_failed', payload);
         alert('Không thể kết nối lại server. Vui lòng thử lại sau.');
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';
     }
 }
 

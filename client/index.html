@@ -1,156 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Cờ Tướng Online - Chinese Chess</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .container {
-                text-align: center;
-                background: white;
-                padding: 60px 40px;
-                border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                max-width: 600px;
-                animation: fadeIn 0.8s ease;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            h1 {
-                font-size: 3em;
-                margin-bottom: 10px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-
-            .subtitle {
-                color: #666;
-                margin-bottom: 40px;
-                font-size: 1.2em;
-            }
-
-            .menu {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-                margin-bottom: 30px;
-            }
-
-            .menu-btn {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-                padding: 20px;
-                background: #f8f9fa;
-                border: 2px solid #e0e0e0;
-                border-radius: 12px;
-                text-decoration: none;
-                transition: all 0.3s;
-                cursor: pointer;
-            }
-
-            .menu-btn:hover {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                transform: translateX(5px);
-                border-color: transparent;
-            }
-
-            .menu-btn .icon {
-                font-size: 2.5em;
-                min-width: 60px;
-            }
-
-            .menu-btn .content {
-                flex: 1;
-                text-align: left;
-            }
-
-            .menu-btn .title {
-                font-size: 1.3em;
-                font-weight: 600;
-                margin-bottom: 5px;
-                color: #333;
-            }
-
-            .menu-btn:hover .title {
-                color: white;
-            }
-
-            .menu-btn .desc {
-                font-size: 0.9em;
-                color: #666;
-            }
-
-            .menu-btn:hover .desc {
-                color: rgba(255, 255, 255, 0.9);
-            }
-
-            footer {
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 2px solid #e0e0e0;
-                color: #666;
-                font-size: 0.9em;
-            }
-
-            .status {
-                display: inline-block;
-                margin-left: 10px;
-                padding: 4px 12px;
-                background: #28a745;
-                color: white;
-                border-radius: 12px;
-                font-size: 0.8em;
-                font-weight: 600;
-            }
-        </style>
+        <title>Đăng Nhập - Cờ Tướng Online</title>
+        <link rel="stylesheet" href="assets/css/login.css" />
     </head>
-    <body>
-        <div class="container">
-            <h1>🎮 Cờ Tướng</h1>
-            <p class="subtitle">Chinese Chess - Xiangqi Online</p>
 
-            <div class="menu">
-                <a href="pages/login.html" class="menu-btn">
-                    <div class="icon">🌐</div>
-                    <div class="content">
-                        <div class="title">Chơi Online <span class="status">NEW</span></div>
-                        <div class="desc">Đối đầu với người chơi thật - Multiplayer</div>
+    <body>
+        <div class="login-page">
+            <div class="auth-container">
+                <div class="logo-section">
+                    <h1>Cờ Tướng</h1>
+                    <p>Chơi cờ tướng online với bạn bè</p>
+                </div>
+
+                <div class="connection-section">
+                    <h3>
+                        <span class="connection-indicator disconnected" id="conn-indicator"></span>
+                        Kết Nối Server
+                    </h3>
+                    <div class="input-group">
+                        <label>Server:</label>
+                        <input type="text" id="server-host" value="127.0.0.1" placeholder="127.0.0.1" />
                     </div>
-                </a>
+                    <div class="input-group">
+                        <label>Port:</label>
+                        <input type="number" id="server-port" value="8080" placeholder="8080" />
+                    </div>
+                    <button id="btn-connect" class="btn-primary">Kết Nối</button>
+                    <div id="connection-status" class="status-message"></div>
+                </div>
+
+                <div id="auth-forms" style="display: none">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="login">Đăng Nhập</button>
+                        <button class="tab-btn" data-tab="register">Đăng Ký</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div id="tab-login" class="tab-content active">
+                        <div class="input-group">
+                            <label>Tên đăng nhập:</label>
+                            <input type="text" id="login-username" placeholder="Nhập username" />
+                        </div>
+                        <div class="input-group">
+                            <label>Mật khẩu:</label>
+                            <input type="password" id="login-password" placeholder="Nhập password" />
+                        </div>
+                        <button id="btn-login" class="btn-primary">Đăng Nhập</button>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="tab-register" class="tab-content">
+                        <div class="input-group">
+                            <label>Tên đăng nhập:</label>
+                            <input type="text" id="register-username" placeholder="Nhập username (3-20 ký tự)" />
+                        </div>
+                        <div class="input-group">
+                            <label>Email:</label>
+                            <input type="email" id="register-email" placeholder="Nhập email" />
+                        </div>
+                        <div class="input-group">
+                            <label>Mật khẩu:</label>
+                            <input
+                                type="password"
+                                id="register-password"
+                                placeholder="Nhập password (tối thiểu 6 ký tự)"
+                            />
+                        </div>
+                        <div class="input-group">
+                            <label>Xác nhận mật khẩu:</label>
+                            <input type="password" id="register-confirm" placeholder="Nhập lại password" />
+                        </div>
+                        <button id="btn-register" class="btn-primary">Đăng Ký</button>
+                    </div>
+
+                    <div id="auth-status" class="status-message"></div>
+                </div>
             </div>
 
-            <footer>
-                <p>🎮 Cờ Tướng Online v1.0 | Made with ❤️ | Nov 2025</p>
-            </footer>
+            <div class="footer">
+                <p>&copy; 2025 Cờ Tướng Online</p>
+            </div>
         </div>
+
+        <script type="module" src="src/pages/login.js"></script>
     </body>
 </html>

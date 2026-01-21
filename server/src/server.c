@@ -138,6 +138,7 @@ void client_disconnect(server_t* server, client_t* client) {
 
     if (client->authenticated) {
         lobby_remove_player(client->user_id);
+        lobby_cleanup_rooms_for_user(client->user_id);
     }
 
     epoll_ctl(server->epoll_fd, EPOLL_CTL_DEL, client->fd, NULL);
@@ -398,12 +399,10 @@ void server_run(server_t* server) {
 
                 int timeout_penalty = 25;
                 if (strcmp(timeouts[i].result, "red_win") == 0) {
-
                     new_black_rating -= timeout_penalty;
                     db_update_user_stats(timeouts[i].red_user_id, 1, 0, 0);
                     db_update_user_stats(timeouts[i].black_user_id, 0, 1, 0);
                 } else {
-
                     new_red_rating -= timeout_penalty;
                     db_update_user_stats(timeouts[i].red_user_id, 0, 1, 0);
                     db_update_user_stats(timeouts[i].black_user_id, 1, 0, 0);

@@ -30,7 +30,7 @@ export async function login(bridge, username, password) {
 }
 
 export async function findMatch(bridge, rated = true) {
-    return bridge.sendAndWait('find_match', { rated }, 'match_found');
+    return bridge.sendAndWait('find_match', { rated: true }, 'match_found');
 }
 
 export async function cancelMatch(bridge) {

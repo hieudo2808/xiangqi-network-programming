@@ -73,7 +73,7 @@ const OPENING_POSITION = [
 
         const userDataStr = localStorage.getItem('xiangqi_user');
         if (!userDataStr) {
-            window.location.href = 'login.html';
+            window.location.href = '../index.html';
             return;
         }
         userData = JSON.parse(userDataStr);
@@ -81,7 +81,7 @@ const OPENING_POSITION = [
         const serverInfoStr = localStorage.getItem('xiangqi_server');
         if (!serverInfoStr) {
             alert('Chưa kết nối server');
-            window.location.href = 'login.html';
+            window.location.href = '../index.html';
             return;
         }
 
